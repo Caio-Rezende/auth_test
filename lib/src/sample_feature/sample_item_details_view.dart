@@ -14,17 +14,23 @@ class SampleItemDetailsView extends StatefulWidget {
 }
 
 class _SampleItemDetaisViewState extends State<SampleItemDetailsView> {
+  final controller = AuthController();
+
   bool authenticated = false;
+  bool hasBiometrics = false;
 
   @override
   void initState() {
     super.initState();
+
+    controller.hasBiometrics.then((hasBiometricsResult) =>
+        setState(() => hasBiometrics = hasBiometricsResult));
   }
 
   tryAuth() {
     AuthController()
         .requestAuth()
-        .then((authResult) => authenticated = authResult);
+        .then((authResult) => setState(() => authenticated = authResult));
   }
 
   @override
@@ -36,10 +42,12 @@ class _SampleItemDetaisViewState extends State<SampleItemDetailsView> {
       body: Center(
         child: authenticated
             ? const Text('More Information Here')
-            : OutlinedButton(
-                onPressed: tryAuth,
-                child: const Text('Authenticate prior to seing the info'),
-              ),
+            : hasBiometrics
+                ? OutlinedButton(
+                    onPressed: tryAuth,
+                    child: const Text('Authenticate prior to seing the info'),
+                  )
+                : const Text('This device doesn\'t support bometric auth'),
       ),
     );
   }
