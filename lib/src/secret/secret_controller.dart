@@ -1,9 +1,11 @@
-import 'package:flutter_keychain/flutter_keychain.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecretController {
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
+
   Future<void> save(String key, String value) async {
     try {
-      await FlutterKeychain.put(key: key, value: value);
+      await storage.write(key: key, value: value);
     } catch (e) {
       print(e);
     }
@@ -11,7 +13,7 @@ class SecretController {
 
   Future<String?> get(String key) async {
     try {
-      return await FlutterKeychain.get(key: key);
+      return await storage.read(key: key);
     } catch (e) {
       print(e);
       return '';
@@ -20,7 +22,7 @@ class SecretController {
 
   Future<void> reset() async {
     try {
-      await FlutterKeychain.clear();
+      await storage.deleteAll();
     } catch (e) {
       print(e);
     }
