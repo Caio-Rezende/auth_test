@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
                     }
                   case SampleItemListView.routeName:
                   default:
-                    return const SampleItemListView();
+                    return SampleItemListView();
                 }
                 return const SizedBox.shrink();
               },
