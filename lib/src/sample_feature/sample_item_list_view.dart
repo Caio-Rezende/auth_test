@@ -144,11 +144,13 @@ class _SampleItemListViewState extends State<SampleItemListView>
                     )
                   : const Text('This device doesn\'t support bometric auth'),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: addItem,
-        backgroundColor: Colors.green,
-        child: const Icon(Icons.plus_one),
-      ),
+      floatingActionButton: !authenticated
+          ? null
+          : FloatingActionButton(
+              onPressed: addItem,
+              backgroundColor: Colors.green,
+              child: const Icon(Icons.plus_one),
+            ),
     );
   }
 }
