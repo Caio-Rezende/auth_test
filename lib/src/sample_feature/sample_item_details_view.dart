@@ -1,5 +1,5 @@
-import 'package:auth_test/src/auth/auth_controller.dart';
 import 'package:auth_test/src/sample_feature/sample_item.dart';
+import 'package:auth_test/src/sample_feature/sample_item_list_view.dart';
 import 'package:auth_test/src/sample_feature/sample_item_secret_view.dart';
 import 'package:flutter/material.dart';
 
@@ -16,10 +16,6 @@ class SampleItemDetailsView extends StatefulWidget {
 
 class _SampleItemDetaisViewState extends State<SampleItemDetailsView>
     with WidgetsBindingObserver {
-  final controller = AuthController();
-
-  bool authenticated = false;
-  bool hasBiometrics = false;
   @override
   void dispose() {
     // Remove the observer
@@ -34,24 +30,13 @@ class _SampleItemDetaisViewState extends State<SampleItemDetailsView>
 
     // Add the observer.
     WidgetsBinding.instance!.addObserver(this);
-
-    controller.hasBiometrics.then((hasBiometricsResult) =>
-        setState(() => hasBiometrics = hasBiometricsResult));
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    setState(() {
-      authenticated = false;
-    });
+    Navigator.popAndPushNamed(context, SampleItemListView.routeName);
 
     super.didChangeAppLifecycleState(state);
-  }
-
-  tryAuth() {
-    AuthController()
-        .requestAuth()
-        .then((authResult) => setState(() => authenticated = authResult));
   }
 
   @override
@@ -61,14 +46,7 @@ class _SampleItemDetaisViewState extends State<SampleItemDetailsView>
         title: Text('Item Details ${widget.item.id}'),
       ),
       body: Center(
-        child: authenticated
-            ? SampleItemSecretView(item: widget.item)
-            : hasBiometrics
-                ? OutlinedButton(
-                    onPressed: tryAuth,
-                    child: const Text('Authenticate prior to seing the info'),
-                  )
-                : const Text('This device doesn\'t support bometric auth'),
+        child: SampleItemSecretView(item: widget.item),
       ),
     );
   }
