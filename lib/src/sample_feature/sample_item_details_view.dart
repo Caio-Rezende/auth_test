@@ -19,7 +19,7 @@ class _SampleItemDetaisViewState extends State<SampleItemDetailsView>
   @override
   void dispose() {
     // Remove the observer
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
 
     super.dispose();
   }
@@ -29,7 +29,7 @@ class _SampleItemDetaisViewState extends State<SampleItemDetailsView>
     super.initState();
 
     // Add the observer.
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override

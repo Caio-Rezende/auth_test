@@ -35,7 +35,7 @@ class _SampleItemListViewState extends State<SampleItemListView>
   @override
   void dispose() {
     // Remove the observer
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
 
     super.dispose();
   }
@@ -45,7 +45,7 @@ class _SampleItemListViewState extends State<SampleItemListView>
     super.initState();
 
     // Add the observer.
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
 
     controller.hasBiometrics.then((hasBiometricsResult) =>
         setState(() => hasBiometrics = hasBiometricsResult));
