@@ -53,9 +53,11 @@ class _SampleItemListViewState extends State<SampleItemListView>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    setState(() {
-      authenticated = false;
-    });
+    if (state == AppLifecycleState.resumed) {
+      setState(() {
+        authenticated = false;
+      });
+    }
 
     super.didChangeAppLifecycleState(state);
   }

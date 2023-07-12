@@ -34,7 +34,9 @@ class _SampleItemDetaisViewState extends State<SampleItemDetailsView>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    Navigator.popAndPushNamed(context, SampleItemListView.routeName);
+    if (state == AppLifecycleState.resumed) {
+      Navigator.popAndPushNamed(context, SampleItemListView.routeName);
+    }
 
     super.didChangeAppLifecycleState(state);
   }
