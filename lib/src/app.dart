@@ -1,6 +1,12 @@
 import 'dart:convert';
 
+import 'package:auth_test/src/contact/contact_item.dart';
+import 'package:auth_test/src/contact/contact_item_view.dart';
+import 'package:auth_test/src/contact/contact_scan_view.dart';
+import 'package:auth_test/src/message/message_scan_view.dart';
+import 'package:auth_test/src/message/message_send_qr_view.dart';
 import 'package:auth_test/src/sample_feature/sample_item.dart';
+import 'package:auth_test/src/widgets/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -72,6 +78,26 @@ class MyApp extends StatelessWidget {
                 switch (routeSettings.name) {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
+                  case SendQRView.routeName:
+                    if (routeSettings.arguments != null) {
+                      final args =
+                          routeSettings.arguments as SendQRViewArguments;
+                      return SendQRView(
+                        msg: args.msg,
+                        title: args.title,
+                      );
+                    }
+                  case MessageScanView.routeName:
+                    return const MessageScanView();
+                  case ContactScanView.routeName:
+                    return const ContactScanView();
+                  case ContactItemView.routeName:
+                    if (routeSettings.arguments != null) {
+                      return ContactItemView(
+                        item: ContactItem.fromJson(
+                            jsonDecode(routeSettings.arguments as String)),
+                      );
+                    }
                   case SampleItemDetailsView.routeName:
                     if (routeSettings.arguments != null) {
                       return SampleItemDetailsView(
@@ -79,9 +105,9 @@ class MyApp extends StatelessWidget {
                             jsonDecode(routeSettings.arguments as String)),
                       );
                     }
-                  case SampleItemListView.routeName:
+                  case MainView.routeName:
                   default:
-                    return SampleItemListView();
+                    return const MainView();
                 }
                 return const SizedBox.shrink();
               },

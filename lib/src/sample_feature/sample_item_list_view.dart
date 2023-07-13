@@ -1,17 +1,14 @@
 import 'dart:convert';
 
 import 'package:auth_test/src/auth/auth_controller.dart';
-import 'package:auth_test/src/secret/secret_controller.dart';
+import 'package:auth_test/src/secret/secure_storage_controller.dart';
 import 'package:flutter/material.dart';
 
-import '../settings/settings_view.dart';
 import 'sample_item.dart';
 import 'sample_item_details_view.dart';
 
 /// Displays a list of SampleItems.
 class SampleItemListView extends StatefulWidget {
-  static const routeName = '/';
-
   const SampleItemListView({
     super.key,
   });
@@ -25,12 +22,14 @@ class _SampleItemListViewState extends State<SampleItemListView>
   List<SampleItem> items = [];
   final controller = AuthController();
 
+  String countStoreKey = 'count';
+
   bool loading = true;
 
   bool authenticated = false;
   bool hasBiometrics = false;
 
-  final SecretController _secretController = SecretController();
+  final SecureStorageController _secretController = SecureStorageController();
 
   @override
   void dispose() {
@@ -65,7 +64,7 @@ class _SampleItemListViewState extends State<SampleItemListView>
   void addItem() {
     setState(() {
       items.add(SampleItem(items.length));
-      _secretController.save('sample.count', items.length.toString());
+      _secretController.save(countStoreKey, items.length.toString());
     });
   }
 
@@ -73,7 +72,7 @@ class _SampleItemListViewState extends State<SampleItemListView>
     final authResult = await AuthController().requestAuth();
     setState(() => authenticated = authResult);
     if (authResult && loading) {
-      _secretController.get('sample.count').then((value) => setState(
+      _secretController.get(countStoreKey).then((value) => setState(
             () {
               loading = false;
               items.addAll(Iterable.generate(int.parse(value ?? "0"))
@@ -86,21 +85,6 @@ class _SampleItemListViewState extends State<SampleItemListView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Secret Items'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // Navigate to the settings page. If the user leaves and returns
-              // to the app after it has been killed while running in the
-              // background, the navigation stack is restored.
-              Navigator.restorablePushNamed(context, SettingsView.routeName);
-            },
-          ),
-        ],
-      ),
-
       // To work with lists that may contain a large number of items, it’s best
       // to use the ListView.builder constructor.
       //

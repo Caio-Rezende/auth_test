@@ -10,12 +10,17 @@ environment:
   sdk: '>=3.0.1 <4.0.0'
 
 dependencies:
+  crypto: ^3.0.3
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
   flutter_secure_storage: ^8.0.0
   local_auth: ^2.1.6
+  pointycastle: ^3.7.3
+  qr_code_scanner: ^1.0.1
+  qr_flutter: ^4.1.0
+  rsa_encrypt: ^2.0.0
 
 dev_dependencies:
   flutter_test:

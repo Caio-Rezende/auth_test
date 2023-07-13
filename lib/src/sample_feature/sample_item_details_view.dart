@@ -1,6 +1,6 @@
 import 'package:auth_test/src/sample_feature/sample_item.dart';
-import 'package:auth_test/src/sample_feature/sample_item_list_view.dart';
 import 'package:auth_test/src/sample_feature/sample_item_secret_view.dart';
+import 'package:auth_test/src/widgets/main_view.dart';
 import 'package:flutter/material.dart';
 
 /// Displays detailed information about a SampleItem.
@@ -35,7 +35,7 @@ class _SampleItemDetaisViewState extends State<SampleItemDetailsView>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      Navigator.popAndPushNamed(context, SampleItemListView.routeName);
+      Navigator.popAndPushNamed(context, MainView.routeName);
     }
 
     super.didChangeAppLifecycleState(state);

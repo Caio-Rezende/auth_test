@@ -1,4 +1,5 @@
 import 'package:auth_test/src/sample_feature/sample_item.dart';
+import 'package:auth_test/src/secret/share_controller.dart';
 import 'package:flutter/material.dart';
 
 /// Displays detailed information about a SampleItem.

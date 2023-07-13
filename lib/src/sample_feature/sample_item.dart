@@ -1,16 +1,17 @@
-import 'package:auth_test/src/secret/secret_controller.dart';
+import 'package:auth_test/src/secret/secure_storage_controller.dart';
 
 /// A placeholder class that represents an entity or model.
 class SampleItem {
-  const SampleItem(this.id);
-
+  final String prefix = 'item';
   final int id;
 
+  const SampleItem(this.id);
+
   Future<String?> get secret async =>
-      await SecretController().get('sample.$id');
+      await SecureStorageController().get('$prefix.$id');
 
   Future<void> setSecret(String value) async =>
-      await SecretController().save('sample.$id', value);
+      await SecureStorageController().save('$prefix.$id', value);
 
   SampleItem.fromJson(Map<String, dynamic> json) : id = json['id'];
 
