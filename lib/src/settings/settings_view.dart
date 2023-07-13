@@ -27,11 +27,13 @@ class _SettingsViewState extends State<SettingsView> {
   initState() {
     super.initState();
 
+/*
     _share.getPrivateKey().then(
           (value) => setState(() {
             _privateKey = value;
           }),
         );
+*/
   }
 
   _displayPublicKey() async {
