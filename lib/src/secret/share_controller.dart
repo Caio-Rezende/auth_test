@@ -1,45 +1,52 @@
+import 'dart:convert';
+
 import 'package:auth_test/src/secret/secure_storage_controller.dart';
 import 'package:pointycastle/export.dart';
 import 'package:rsa_encrypt/rsa_encrypt.dart';
 
 class ShareController {
-  final publicKeyStoreKey = 'public.key';
-  final privateKeyStoreKey = 'private.key';
+  final _publicKeyStoreKey = 'public.key';
+  final _privateKeyStoreKey = 'private.key';
 
   final SecureStorageController _secureStorage = SecureStorageController();
   final _helper = RsaKeyHelper();
 
-  RSAPublicKey? publicKey;
-  RSAPrivateKey? privateKey;
+  RSAPublicKey? _publicKey;
+  RSAPrivateKey? _privateKey;
 
   String sendMessage(String msg, String othersPublicKeyPEM) {
     final othersPublicKey = _helper.parsePublicKeyFromPem(othersPublicKeyPEM);
-    return encrypt(msg, othersPublicKey);
+    final partial = encrypt(msg, othersPublicKey);
+
+    final encoded = base64.encode(utf8.encode(partial));
+    return encoded;
   }
 
   Future<String> receiveMessage(String msg) async {
+    final decoded = utf8.decode(base64.decode(msg));
+
     await _initKeyPair();
-    return decrypt(msg, privateKey!);
+    return decrypt(decoded, _privateKey!);
   }
 
   Future<String> getPublicKey() async {
     await _initKeyPair();
-    return _helper.encodePublicKeyToPemPKCS1(publicKey!);
+    return _helper.encodePublicKeyToPemPKCS1(_publicKey!);
   }
 
   Future<String> getPrivateKey() async {
     await _initKeyPair();
-    return _helper.encodePrivateKeyToPemPKCS1(privateKey!);
+    return _helper.encodePrivateKeyToPemPKCS1(_privateKey!);
   }
 
   _initKeyPair() async {
     await _loadKeyPair();
 
-    if (publicKey == null || privateKey == null) {
+    if (_publicKey == null || _privateKey == null) {
       final keyPair =
           await _helper.computeRSAKeyPair(_helper.getSecureRandom());
-      publicKey = keyPair.publicKey as RSAPublicKey;
-      privateKey = keyPair.privateKey as RSAPrivateKey;
+      _publicKey = keyPair.publicKey as RSAPublicKey;
+      _privateKey = keyPair.privateKey as RSAPrivateKey;
 
       _saveKeyPair();
     }
@@ -47,20 +54,20 @@ class ShareController {
 
   _saveKeyPair() {
     _secureStorage.save(
-        publicKeyStoreKey, _helper.encodePublicKeyToPemPKCS1(publicKey!));
+        _publicKeyStoreKey, _helper.encodePublicKeyToPemPKCS1(_publicKey!));
     _secureStorage.save(
-        privateKeyStoreKey, _helper.encodePrivateKeyToPemPKCS1(privateKey!));
+        _privateKeyStoreKey, _helper.encodePrivateKeyToPemPKCS1(_privateKey!));
   }
 
   _loadKeyPair() async {
-    final storedPublicKey = await _secureStorage.get(publicKeyStoreKey);
+    final storedPublicKey = await _secureStorage.get(_publicKeyStoreKey);
     if (storedPublicKey != null) {
-      publicKey = _helper.parsePublicKeyFromPem(storedPublicKey);
+      _publicKey = _helper.parsePublicKeyFromPem(storedPublicKey);
     }
 
-    final storedPrivateKey = await _secureStorage.get(privateKeyStoreKey);
+    final storedPrivateKey = await _secureStorage.get(_privateKeyStoreKey);
     if (storedPrivateKey != null) {
-      privateKey = _helper.parsePrivateKeyFromPem(storedPrivateKey);
+      _privateKey = _helper.parsePrivateKeyFromPem(storedPrivateKey);
     }
   }
 }

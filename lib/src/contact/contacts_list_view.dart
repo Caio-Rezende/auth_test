@@ -36,8 +36,9 @@ class _ContactsListViewState extends State<ContactsListView> {
     });
   }
 
-  startScan() {
-    Navigator.pushNamed(context, ContactScanView.routeName);
+  startScan() async {
+    await Navigator.pushNamed(context, ContactScanView.routeName);
+    _loadItems();
   }
 
   @override

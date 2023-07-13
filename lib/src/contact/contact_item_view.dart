@@ -117,6 +117,10 @@ class _ContactItemViewState extends State<ContactItemView> {
                     onPressed: () => setState(() => editing = false),
                     child: const Text('Done'),
                   ),
+                  const SizedBox.square(
+                    dimension: 20,
+                  ),
+                  Text(widget.item.publicKey)
                 ],
               ),
       ),

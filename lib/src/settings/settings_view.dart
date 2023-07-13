@@ -20,8 +20,22 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
+  String _privateKey = '';
+  final _share = ShareController();
+
+  @override
+  initState() {
+    super.initState();
+
+    _share.getPrivateKey().then(
+          (value) => setState(() {
+            _privateKey = value;
+          }),
+        );
+  }
+
   _displayPublicKey() async {
-    final publicKey = await ShareController().getPublicKey();
+    final publicKey = await _share.getPublicKey();
     Navigator.popAndPushNamed(
       context,
       SendQRView.routeName,
@@ -36,42 +50,50 @@ class _SettingsViewState extends State<SettingsView> {
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        // Glue the SettingsController to the theme selection DropdownButton.
-        //
-        // When a user selects a theme from the dropdown list, the
-        // SettingsController is updated, which rebuilds the MaterialApp.
-        child: Column(
-          children: [
-            DropdownButton<ThemeMode>(
-              // Read the selected themeMode from the controller
-              value: widget.controller.themeMode,
-              // Call the updateThemeMode method any time the user selects a theme.
-              onChanged: widget.controller.updateThemeMode,
-              items: const [
-                DropdownMenuItem(
-                  value: ThemeMode.system,
-                  child: Text('System Theme'),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          // Glue the SettingsController to the theme selection DropdownButton.
+          //
+          // When a user selects a theme from the dropdown list, the
+          // SettingsController is updated, which rebuilds the MaterialApp.
+          child: Column(
+            children: [
+              DropdownButton<ThemeMode>(
+                // Read the selected themeMode from the controller
+                value: widget.controller.themeMode,
+                // Call the updateThemeMode method any time the user selects a theme.
+                onChanged: widget.controller.updateThemeMode,
+                items: const [
+                  DropdownMenuItem(
+                    value: ThemeMode.system,
+                    child: Text('System Theme'),
+                  ),
+                  DropdownMenuItem(
+                    value: ThemeMode.light,
+                    child: Text('Light Theme'),
+                  ),
+                  DropdownMenuItem(
+                    value: ThemeMode.dark,
+                    child: Text('Dark Theme'),
+                  )
+                ],
+              ),
+              const SizedBox.square(
+                dimension: 16,
+              ),
+              OutlinedButton(
+                onPressed: _displayPublicKey,
+                child: const Text('Share publicKey'),
+              ),
+              if (_privateKey.isNotEmpty) ...[
+                const SizedBox.square(
+                  dimension: 16,
                 ),
-                DropdownMenuItem(
-                  value: ThemeMode.light,
-                  child: Text('Light Theme'),
-                ),
-                DropdownMenuItem(
-                  value: ThemeMode.dark,
-                  child: Text('Dark Theme'),
-                )
-              ],
-            ),
-            const SizedBox.square(
-              dimension: 16,
-            ),
-            OutlinedButton(
-              onPressed: _displayPublicKey,
-              child: const Text('Share publicKey'),
-            )
-          ],
+                Text(_privateKey)
+              ]
+            ],
+          ),
         ),
       ),
     );

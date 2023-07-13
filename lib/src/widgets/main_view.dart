@@ -1,6 +1,7 @@
 import 'package:auth_test/src/contact/contacts_list_view.dart';
 import 'package:auth_test/src/message/message_scan_view.dart';
 import 'package:auth_test/src/sample_feature/sample_item_list_view.dart';
+import 'package:auth_test/src/secret/share_controller.dart';
 import 'package:auth_test/src/settings/settings_view.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,22 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
+  @override
+  void initState() {
+    super.initState();
+
+    test();
+  }
+
+  test() async {
+    final share = ShareController();
+    final encoded = share.sendMessage(
+        'your keys are configured', await share.getPublicKey());
+    final decoded = await share.receiveMessage(encoded);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(decoded)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

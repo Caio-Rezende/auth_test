@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:auth_test/src/contact/contact_item.dart';
 import 'package:auth_test/src/secret/secure_storage_controller.dart';
+import 'package:auth_test/src/widgets/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -36,7 +37,7 @@ class _ContactScanViewState extends State<ContactScanView> {
       body: Column(
         children: <Widget>[
           Expanded(
-            flex: 5,
+            flex: 4,
             child: QRView(
               key: qrKey,
               overlay: QrScannerOverlayShape(
@@ -44,10 +45,29 @@ class _ContactScanViewState extends State<ContactScanView> {
               onQRViewCreated: _onQRViewCreated,
             ),
           ),
-          const Expanded(
-            flex: 1,
-            child: Center(
-              child: Text('Scan a contact\'s public key'),
+          Expanded(
+            flex: 2,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Scan a contact\'s public key'),
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          decoration:
+                              const InputDecoration(labelText: 'or Paste here'),
+                          maxLines: 1,
+                          autofocus: false,
+                          onSubmitted: (value) => action(value),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
             ),
           )
         ],
@@ -58,32 +78,38 @@ class _ContactScanViewState extends State<ContactScanView> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) async {
-      final storage = SecureStorageController();
-      final obj = await storage.get(ContactItem.listKey);
-      List<String> list = [];
-      if (obj != null) {
-        final List<dynamic> parsed = jsonDecode(obj);
-        list = parsed.map((e) => e.toString()).toList();
-      }
+      if (scanData.code == null) return;
 
-      final item = ContactItem(publicKey: scanData.code!, name: 'New Contact');
-      if (list.contains(item.hash)) {
-        final saved = await ContactItem.fromStorage(item.hash);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Contact already saved as ${saved!.name}')));
-
-        Navigator.pop(context);
-        return;
-      }
-
-      item.toStorage();
-
-      list.add(item.hash);
-      storage.save(ContactItem.listKey, jsonEncode(list));
-
-      Navigator.pop(context);
+      action(scanData.code!);
     });
+  }
+
+  action(String code) async {
+    final storage = SecureStorageController();
+    final obj = await storage.get(ContactItem.listKey);
+    List<String> list = [];
+    if (obj != null) {
+      final List<dynamic> parsed = jsonDecode(obj);
+      list = parsed.map((e) => e.toString()).toList();
+    }
+
+    final item = ContactItem(publicKey: code, name: 'New Contact');
+    if (list.contains(item.hash)) {
+      final saved = await ContactItem.fromStorage(item.hash);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Contact already saved as ${saved!.name}')));
+
+      Navigator.popAndPushNamed(context, MainView.routeName);
+      return;
+    }
+
+    item.toStorage();
+
+    list.add(item.hash);
+    storage.save(ContactItem.listKey, jsonEncode(list));
+
+    Navigator.popAndPushNamed(context, MainView.routeName);
   }
 
   @override

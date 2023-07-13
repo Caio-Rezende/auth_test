@@ -33,16 +33,19 @@ class _ContactState extends State<_ContactSendMessageContent> {
   final TextEditingController _controller = TextEditingController();
 
   sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      final partial = ShareController()
-          .sendMessage(_controller.text, widget.item.publicKey);
-      Navigator.popAndPushNamed(
-        context,
-        SendQRView.routeName,
-        arguments: SendQRViewArguments(
-            msg: partial, title: 'Message to ${widget.item.name}'),
-      );
+    if (_controller.text.isEmpty) {
+      return;
     }
+
+    final msg =
+        ShareController().sendMessage(_controller.text, widget.item.publicKey);
+
+    Navigator.popAndPushNamed(
+      context,
+      SendQRView.routeName,
+      arguments: SendQRViewArguments(
+          msg: msg, title: 'Message to ${widget.item.name}'),
+    );
   }
 
   @override
